@@ -1,0 +1,21 @@
+plugins {
+    id "org.jetbrains.intellij" version "0.2.16"
+}
+
+group 'de.dieploegers.idea.shellfilter'
+version '1.0.0-beta.1'
+
+apply plugin: 'java'
+sourceCompatibility = 1.8
+
+intellij {
+    updateSinceUntilBuild = false
+}
+patchPluginXml {
+    sinceBuild 172
+}
+publishPlugin{
+    channels = ["beta"]
+    username = project.property("publish.username")
+    password = project.property("publish.password")
+}

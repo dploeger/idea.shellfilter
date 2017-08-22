@@ -1,0 +1,53 @@
+<idea-plugin>
+    <id>de.dieploegers.develop.idea.shellfilter</id>
+    <name>Shell Filter</name>
+    <version>1.0.0-beta.1</version>
+    <vendor email="develop@dieploegers.de" url="http://www.yourcompany.com">
+        YourCompany
+    </vendor>
+
+    <description><![CDATA[
+      <p>Runs a shell command on a selected text and replaces the text with the
+      result.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      <ul>
+        <li><b>1.0.0</b> First version, adopted code from <a href="https://code.google.com/archive/p/shell-process/">old shell-process plugin</a>
+        </li>
+      </ul>
+    ]]>
+    </change-notes>
+
+    <idea-version since-build="172"/>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+            serviceImplementation="de.dieploegers.develop.idea.shellfilter.Settings"/>
+        <applicationConfigurable
+            instance="de.dieploegers.develop.idea.shellfilter.ui.Configurable"
+            groupId="null"/>
+    </extensions>
+
+    <actions>
+        <action
+            class="de.dieploegers.develop.idea.shellfilter.FilterAction"
+            id="ShellFilter.FilterAction"
+            text="Shell Filter"
+            description="Filter a selection using a shell execution or insert text from a shell execution."
+            icon="ShellFilterIcons.TOOLBAR_ICON"
+        >
+            <add-to-group group-id="EditMenu" anchor="after" relative-to-action="TemplateParametersNavigation" />
+        </action>
+    </actions>
+
+    <application-components>
+        <component>
+            <implementation-class>
+                de.dieploegers.develop.idea.shellfilter.Settings
+            </implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>
