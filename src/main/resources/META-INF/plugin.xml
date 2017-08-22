@@ -2,8 +2,8 @@
     <id>de.dieploegers.develop.idea.shellfilter</id>
     <name>Shell Filter</name>
     <version>1.0.0-beta.1</version>
-    <vendor email="develop@dieploegers.de" url="http://www.yourcompany.com">
-        YourCompany
+    <vendor email="jetbrains.dennis@dieploegers.de" url="https://github.com/dploeger/idea.shellfilter">
+        Dennis Plöger
     </vendor>
 
     <description><![CDATA[
