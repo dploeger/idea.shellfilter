@@ -15,6 +15,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ListSpeedSearch;
 import com.intellij.ui.components.JBList;
 import de.dieploegers.develop.idea.shellfilter.beans.CommandBean;
+import de.dieploegers.develop.idea.shellfilter.error.ShellCommandErrorException;
+import de.dieploegers.develop.idea.shellfilter.error.ShellCommandNoOutputException;
 import icons.ShellFilterIcons;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
@@ -70,7 +72,10 @@ public class FilterAction extends AnAction {
             settings.getCommands()
         );
 
-        commands.add(0, new CommandBean(resourceBundle.getString("custom"), CUSTOM_ID, true));
+        commands.add(0,
+            new CommandBean(resourceBundle.getString("custom"),
+                CUSTOM_ID,
+                true));
 
         LOG.debug("Building up command list popup");
 
@@ -194,7 +199,44 @@ public class FilterAction extends AnAction {
                 "No text was selected. Won't provide an input to the command.");
         }
 
-        String replacement = process(command.getCommand(), selectedText);
+        String replacement = null;
+        try {
+            replacement = process(command.getCommand(), selectedText);
+        } catch (final ShellCommandErrorException e) {
+            LOG.error(e);
+            Messages.showErrorDialog(
+                e.getMessage(),
+                resourceBundle.getString("dialog.error.commanderror.title")
+            );
+            return;
+        } catch (final ShellCommandNoOutputException e) {
+            LOG.error(e);
+            Messages.showErrorDialog(
+                e.getMessage(),
+                resourceBundle.getString("dialog.error.nooutput.title")
+            );
+            return;
+        } catch (final IOException e) {
+            final String error = String.format(
+                resourceBundle.getString("dialog.error.executing.message"),
+                e.getMessage()
+            );
+            LOG.error(error, e);
+            Messages.showErrorDialog(
+                error,
+                resourceBundle.getString("dialog.error.executing.title")
+            );
+        } catch (final InterruptedException e) {
+            final String error = String.format(
+                resourceBundle.getString("dialog.error.interrupted.message"),
+                e.getMessage()
+            );
+            LOG.error(error, e);
+            Messages.showErrorDialog(
+                error,
+                resourceBundle.getString("dialog.error.interrupted.title")
+            );
+        }
 
         if (replacement != null) {
             if (command.isRemoveTrailingNewline()) {
@@ -205,7 +247,10 @@ public class FilterAction extends AnAction {
 
             final Runnable filterRunnable;
             if (editor.getSelectionModel().hasSelection()) {
-                LOG.debug("Replacing selection with this text: ", replacement); //NON-NLS
+                LOG.debug(
+                    "Replacing selection with this text: ", //NON-NLS
+                    replacement
+                );
                 filterRunnable =
                     () -> editor.getDocument().replaceString(
                         editor.getSelectionModel()
@@ -215,7 +260,10 @@ public class FilterAction extends AnAction {
                         replacementText
                     );
             } else {
-                LOG.debug("Inserting this text into the editor: ", replacement); //NON-NLS
+                LOG.debug(
+                    "Inserting this text into the editor: ", //NON-NLS
+                    replacement
+                );
                 filterRunnable =
                     () -> editor.getDocument().insertString(
                         editor.getCaretModel()
@@ -247,6 +295,10 @@ public class FilterAction extends AnAction {
 
     private String process(final String command,
                            final String filterContent)
+        throws
+        ShellCommandErrorException,
+        ShellCommandNoOutputException,
+        IOException, InterruptedException
     {
         LOG.debug("Writing command into a temporary file");
 
@@ -286,13 +338,14 @@ public class FilterAction extends AnAction {
 
         final Process p;
         final DataInputStream pStdout;
+        final DataInputStream pStdErr;
         final DataOutputStream pStdin;
         final String output;
 
         try {
             p = Runtime.getRuntime().exec(cmd);
-            pStdout = new DataInputStream(p.getInputStream());
 
+            pStdout = new DataInputStream(p.getInputStream());
             if (filterContent.length() > 0) {
                 LOG.debug("Piping selected text into stdin of the shell");
                 pStdin = new DataOutputStream(p.getOutputStream());
@@ -300,26 +353,40 @@ public class FilterAction extends AnAction {
                 pStdin.close();
             }
             output = cat(pStdout);
-        } catch (final IOException e) {
-            final String error = String.format(
-                resourceBundle.getString("dialog.error.executing.message"),
-                e.getMessage()
-            );
-            LOG.error(error, e);
-            Messages.showErrorDialog(
-                error,
-                resourceBundle.getString("dialog.error.executing.title")
-            );
-            return null;
-        }
 
-        if (!commandFile.delete()) {
-            LOG.warn(
-                String.format(
-                    "Temporary file %s can not be deleted.", //NON-NLS
-                    commandFile.getPath()
-                )
-            );
+            p.waitFor();
+
+            final int exitValue = p.exitValue();
+            if (exitValue != 0) {
+                pStdErr = new DataInputStream(p.getErrorStream());
+                final String commandError = cat(pStdErr);
+                final String error = String.format(
+                    resourceBundle.getString("error.commanderror"),
+                    cmd,
+                    exitValue,
+                    output,
+                    commandError
+                );
+                throw new ShellCommandErrorException(error);
+            }
+
+            if (StringUtils.isEmpty(output)) {
+                final String error = String.format(
+                    resourceBundle.getString("error.nooutput"),
+                    cmd
+                );
+                throw new ShellCommandNoOutputException(error);
+            }
+
+        } finally {
+            if (!commandFile.delete()) {
+                LOG.warn(
+                    String.format(
+                        "Temporary file %s can not be deleted.", //NON-NLS
+                        commandFile.getPath()
+                    )
+                );
+            }
         }
 
         return output;
