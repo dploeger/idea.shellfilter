@@ -14,6 +14,7 @@ into the current Editor.</p>
 
     <change-notes><![CDATA[
       <ul>
+        <li><b>1.0.0-beta.3</b> Smaller command dialog fixes and documentation update</li>
         <li><b>1.0.0-beta.2</b>
             <ul>
               <li>Optimized shell command handling</li>

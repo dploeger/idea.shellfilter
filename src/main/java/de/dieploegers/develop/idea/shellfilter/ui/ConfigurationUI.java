@@ -47,6 +47,9 @@ public class ConfigurationUI {
             final CommandSettingsDialog
                 commandSettingsDialog =
                 new CommandSettingsDialog();
+            commandSettingsDialog.setTitle(
+                resourceBundle.getString("dialog.command.new.title")
+            );
             if (commandSettingsDialog.showAndGet()) {
                 final CommandBean newCommand = new CommandBean();
                 commandSettingsDialog.getData(newCommand);
@@ -57,7 +60,11 @@ public class ConfigurationUI {
             final CommandBean selectedCommandBean =
                 commandList.getSelectedValue();
             final CommandSettingsDialog commandSettingsDialog =
-                new CommandSettingsDialog(selectedCommandBean);
+                new CommandSettingsDialog();
+            commandSettingsDialog.setData(selectedCommandBean);
+            commandSettingsDialog.setTitle(
+                resourceBundle.getString("dialog.command.update.title")
+            );
             if (commandSettingsDialog.showAndGet()) {
                 final CommandBean updatedCommand = new CommandBean();
                 commandSettingsDialog.getData(updatedCommand);
