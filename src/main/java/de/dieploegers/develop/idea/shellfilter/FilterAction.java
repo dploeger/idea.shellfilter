@@ -203,14 +203,14 @@ public class FilterAction extends AnAction {
         try {
             replacement = process(command.getCommand(), selectedText);
         } catch (final ShellCommandErrorException e) {
-            LOG.error(e);
+            LOG.warn(e);
             Messages.showErrorDialog(
                 e.getMessage(),
                 resourceBundle.getString("dialog.error.commanderror.title")
             );
             return;
         } catch (final ShellCommandNoOutputException e) {
-            LOG.error(e);
+            LOG.warn(e);
             Messages.showErrorDialog(
                 e.getMessage(),
                 resourceBundle.getString("dialog.error.nooutput.title")

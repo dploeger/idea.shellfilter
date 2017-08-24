@@ -46,15 +46,23 @@ public class ConfigurationUI {
         decorator.setAddAction(anActionButton -> {
             final CommandSettingsDialog
                 commandSettingsDialog =
-                new CommandSettingsDialog(this);
-            commandSettingsDialog.setVisible(true);
+                new CommandSettingsDialog();
+            if (commandSettingsDialog.showAndGet()) {
+                final CommandBean newCommand = new CommandBean();
+                commandSettingsDialog.getData(newCommand);
+                addNewCommand(newCommand);
+            }
         });
         decorator.setEditAction(anActionButton -> {
             final CommandBean selectedCommandBean =
                 commandList.getSelectedValue();
             final CommandSettingsDialog commandSettingsDialog =
-                new CommandSettingsDialog(this, selectedCommandBean);
-            commandSettingsDialog.setVisible(true);
+                new CommandSettingsDialog(selectedCommandBean);
+            if (commandSettingsDialog.showAndGet()) {
+                final CommandBean updatedCommand = new CommandBean();
+                commandSettingsDialog.getData(updatedCommand);
+                updateCommand(selectedCommandBean, updatedCommand);
+            }
         });
 
         decorator.disableDownAction();
