@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>de.dieploegers.develop.idea.shellfilter</id>
     <name>Shell Filter</name>
-    <version>1.0.0-beta.1</version>
+    <version>1.0.0</version>
     <vendor email="jetbrains.dennis@dieploegers.de" url="https://github.com/dploeger/idea.shellfilter">
         Dennis Plöger
     </vendor>

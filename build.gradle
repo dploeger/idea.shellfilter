@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'de.dieploegers.idea.shellfilter'
-version '1.0.0-beta.3'
+version '1.0.0'
 
 apply plugin: 'java'
 sourceCompatibility = 1.8
@@ -15,7 +15,7 @@ patchPluginXml {
     sinceBuild 172
 }
 publishPlugin{
-    channels = ["beta"]
+    channels = ["stable"]
     username = project.property("publish.username")
     password = project.property("publish.password")
 }
