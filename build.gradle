@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'de.dieploegers.idea.shellfilter'
-version '1.0.0'
+version '1.0.1'
 
 apply plugin: 'java'
 sourceCompatibility = 1.8

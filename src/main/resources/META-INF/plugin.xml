@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>de.dieploegers.develop.idea.shellfilter</id>
     <name>Shell Filter</name>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <vendor email="jetbrains.dennis@dieploegers.de" url="https://github.com/dploeger/idea.shellfilter">
         Dennis Plöger
     </vendor>
@@ -23,6 +23,8 @@ into the current Editor.</p>
         </li>
         <li><b>1.0.0-beta.1</b> First version, adopted code from <a href="https://code.google.com/archive/p/shell-process/">old shell-process plugin</a>
         </li>
+        <li><b>1.0.0</b> First stable release</li>
+        <li><b>1.0.1</b> #1 Added default shortcut key CTRL-Meta-I</li>
       </ul>
     ]]>
     </change-notes>
@@ -48,6 +50,7 @@ into the current Editor.</p>
             icon="ShellFilterIcons.TOOLBAR_ICON"
         >
             <add-to-group group-id="EditMenu" anchor="after" relative-to-action="TemplateParametersNavigation" />
+            <keyboard-shortcut first-keystroke="control meta I" keymap="$default"/>
         </action>
     </actions>
 
