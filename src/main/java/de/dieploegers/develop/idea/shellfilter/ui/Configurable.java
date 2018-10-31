@@ -49,4 +49,14 @@ public class Configurable implements com.intellij.openapi.options.Configurable {
         settings.setFromConfigurationBean(configurationBean);
     }
 
+    @Nullable
+    @Override
+    public String getHelpTopic() {
+        return null;
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }

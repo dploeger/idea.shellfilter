@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>de.dieploegers.develop.idea.shellfilter</id>
     <name>Shell Filter</name>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <vendor email="jetbrains.dennis@dieploegers.de" url="https://github.com/dploeger/idea.shellfilter">
         Dennis Plöger
     </vendor>
@@ -25,6 +25,7 @@ into the current Editor.</p>
         </li>
         <li><b>1.0.0</b> First stable release</li>
         <li><b>1.0.1</b> #1 Added default shortcut key CTRL-Meta-I</li>
+        <li><b>2.0.0</b> #2 When no text is selected, the complete file will be send to STDIN</li>
       </ul>
     ]]>
     </change-notes>

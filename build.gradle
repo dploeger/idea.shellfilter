@@ -1,21 +1,33 @@
-plugins {
-    id "org.jetbrains.intellij" version "0.2.16"
+buildscript {
+    repositories {
+        mavenCentral()
+    }
 }
 
-group 'de.dieploegers.idea.shellfilter'
-version '1.0.1'
+plugins {
+    id "org.jetbrains.intellij" version "0.3.4"
+}
 
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 sourceCompatibility = 1.8
 
 intellij {
     updateSinceUntilBuild = false
+    version '2017.2'
+    pluginName 'shellfilter'
 }
+
 patchPluginXml {
-    sinceBuild 172
+    sinceBuild '172.3317.76'
 }
+
 publishPlugin{
     channels = ["stable"]
     username = project.property("publish.username")
     password = project.property("publish.password")
 }
+
+group 'de.dieploegers.idea.shellfilter'
+version '1.0.1'

@@ -21,13 +21,7 @@ import icons.ShellFilterIcons;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
 
-import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,7 +33,7 @@ public class FilterAction extends AnAction {
     private final Logger LOG = Logger.getInstance(FilterAction.class);
     @NonNls
     private final ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("i18n.shellfilter");
+            ResourceBundle.getBundle("i18n.shellfilter");
 
     private String cat(final InputStream is) throws IOException {
         LOG.debug("Converting stdout stream into a string"); // NON-NLS
@@ -63,26 +57,27 @@ public class FilterAction extends AnAction {
         LOG.debug("Shell Filter was invoked. Fetching data from event.");
 
         final Editor editor =
-            anActionEvent.getRequiredData(CommonDataKeys.EDITOR);
+                anActionEvent.getRequiredData(CommonDataKeys.EDITOR);
 
         LOG.debug("Building up command list from settings and custom command");
 
         final Settings settings = Settings.getInstance();
         final List<CommandBean> commands = new ArrayList<>(
-            settings.getCommands()
+                settings.getCommands()
         );
 
         commands.add(0,
-            new CommandBean(resourceBundle.getString("custom"),
-                CUSTOM_ID,
-                true));
+                new CommandBean(resourceBundle.getString("custom"),
+                        CUSTOM_ID,
+                        true));
 
         LOG.debug("Building up command list popup");
 
-        final JList<CommandBean> commandList = new JBList<>(commands);
+        final JBList<CommandBean> commandList = new JBList<>(commands);
+        new ListSpeedSearch<>(commandList);
 
         final String lastSelectedCommand =
-            Settings.getInstance().getLastSelectedCommand();
+                Settings.getInstance().getLastSelectedCommand();
 
         if (lastSelectedCommand != null) {
 
@@ -93,13 +88,9 @@ public class FilterAction extends AnAction {
             }
         }
 
-        final ListSpeedSearch<CommandBean> commmandListSpeedSearch =
-            new ListSpeedSearch<>(commandList);
-
         final JBPopup popup = JBPopupFactory.getInstance()
-            .createListPopupBuilder(
-                commmandListSpeedSearch.getComponent()
-            ).createPopup();
+                .createListPopupBuilder(commandList)
+                .createPopup();
 
         LOG.debug("Adding popup listener");
 
@@ -114,10 +105,10 @@ public class FilterAction extends AnAction {
                 if (e.isOk()) {
 
                     final CommandBean selectedCommand =
-                        commandList.getSelectedValue();
+                            commandList.getSelectedValue();
 
                     Settings.getInstance().setLastSelectedCommand(
-                        selectedCommand.getName()
+                            selectedCommand.getName()
                     );
 
                     final CommandBean command;
@@ -125,20 +116,20 @@ public class FilterAction extends AnAction {
                         LOG.debug("Custom command selected. Show input dialog");
 
                         final CommandBean lastCustomCommand =
-                            Settings.getInstance().getLastCustomCommand();
+                                Settings.getInstance().getLastCustomCommand();
 
                         final Pair<String, Boolean> customCommand =
-                            Messages.showInputDialogWithCheckBox(
-                                resourceBundle.getString("dialog.custom.message"),
-                                resourceBundle.getString("dialog.custom.title"),
-                                resourceBundle.getString(
-                                    "configuration.command.trim"),
-                                lastCustomCommand.isRemoveTrailingNewline(),
-                                true,
-                                ShellFilterIcons.TOOLBAR_ICON,
-                                lastCustomCommand.getCommand(),
-                                null
-                            );
+                                Messages.showInputDialogWithCheckBox(
+                                        resourceBundle.getString("dialog.custom.message"),
+                                        resourceBundle.getString("dialog.custom.title"),
+                                        resourceBundle.getString(
+                                                "configuration.command.trim"),
+                                        lastCustomCommand.isRemoveTrailingNewline(),
+                                        true,
+                                        ShellFilterIcons.TOOLBAR_ICON,
+                                        lastCustomCommand.getCommand(),
+                                        null
+                                );
 
                         if (StringUtils.isEmpty(customCommand.getFirst())) {
                             LOG.debug("No custom command specified. Canceling");
@@ -146,24 +137,24 @@ public class FilterAction extends AnAction {
                         }
 
                         command = new CommandBean("Custom",
-                            customCommand.getFirst(),
-                            customCommand.getSecond()
+                                customCommand.getFirst(),
+                                customCommand.getSecond()
                         );
 
                         LOG.debug("Storing last custom command");
 
                         lastCustomCommand.setCommand(
-                            customCommand.getFirst()
+                                customCommand.getFirst()
                         );
                         lastCustomCommand.setRemoveTrailingNewline(
-                            customCommand.getSecond()
+                                customCommand.getSecond()
                         );
                     } else {
                         LOG.debug(
-                            String.format(
-                                "Command %s selected.", //NON-NLS
-                                selectedCommand.getName()
-                            )
+                                String.format(
+                                        "Command %s selected.", //NON-NLS
+                                        selectedCommand.getName()
+                                )
                         );
 
                         if (StringUtils.isEmpty(selectedCommand.getCommand())) {
@@ -188,15 +179,19 @@ public class FilterAction extends AnAction {
 
         LOG.debug("Running command");
 
-        String selectedText = "";
+        String selectedText;
 
         if (editor.getSelectionModel().hasSelection()) {
             selectedText =
-                editor.getSelectionModel().getSelectedText();
+                    editor.getSelectionModel().getSelectedText();
             LOG.debug("Providing this text as input: ", selectedText); //NON-NLS
         } else {
             LOG.debug(
-                "No text was selected. Won't provide an input to the command.");
+                    "No text was selected. Providing the whole file to the command."
+            );
+
+            selectedText =
+                    editor.getDocument().getText();
         }
 
         String replacement = null;
@@ -205,36 +200,36 @@ public class FilterAction extends AnAction {
         } catch (final ShellCommandErrorException e) {
             LOG.warn(e);
             Messages.showErrorDialog(
-                e.getMessage(),
-                resourceBundle.getString("dialog.error.commanderror.title")
+                    e.getMessage(),
+                    resourceBundle.getString("dialog.error.commanderror.title")
             );
             return;
         } catch (final ShellCommandNoOutputException e) {
             LOG.warn(e);
             Messages.showErrorDialog(
-                e.getMessage(),
-                resourceBundle.getString("dialog.error.nooutput.title")
+                    e.getMessage(),
+                    resourceBundle.getString("dialog.error.nooutput.title")
             );
             return;
         } catch (final IOException e) {
             final String error = String.format(
-                resourceBundle.getString("dialog.error.executing.message"),
-                e.getMessage()
+                    resourceBundle.getString("dialog.error.executing.message"),
+                    e.getMessage()
             );
             LOG.error(error, e);
             Messages.showErrorDialog(
-                error,
-                resourceBundle.getString("dialog.error.executing.title")
+                    error,
+                    resourceBundle.getString("dialog.error.executing.title")
             );
         } catch (final InterruptedException e) {
             final String error = String.format(
-                resourceBundle.getString("dialog.error.interrupted.message"),
-                e.getMessage()
+                    resourceBundle.getString("dialog.error.interrupted.message"),
+                    e.getMessage()
             );
             LOG.error(error, e);
             Messages.showErrorDialog(
-                error,
-                resourceBundle.getString("dialog.error.interrupted.title")
+                    error,
+                    resourceBundle.getString("dialog.error.interrupted.title")
             );
         }
 
@@ -248,34 +243,34 @@ public class FilterAction extends AnAction {
             final Runnable filterRunnable;
             if (editor.getSelectionModel().hasSelection()) {
                 LOG.debug(
-                    "Replacing selection with this text: ", //NON-NLS
-                    replacement
+                        "Replacing selection with this text: ", //NON-NLS
+                        replacement
                 );
                 filterRunnable =
-                    () -> editor.getDocument().replaceString(
-                        editor.getSelectionModel()
-                            .getSelectionStart(),
-                        editor.getSelectionModel()
-                            .getSelectionEnd(),
-                        replacementText
-                    );
+                        () -> editor.getDocument().replaceString(
+                                editor.getSelectionModel()
+                                        .getSelectionStart(),
+                                editor.getSelectionModel()
+                                        .getSelectionEnd(),
+                                replacementText
+                        );
             } else {
                 LOG.debug(
-                    "Inserting this text into the editor: ", //NON-NLS
-                    replacement
+                        "Inserting this text into the editor: ", //NON-NLS
+                        replacement
                 );
                 filterRunnable =
-                    () -> editor.getDocument().insertString(
-                        editor.getCaretModel()
-                            .getCurrentCaret()
-                            .getOffset(),
-                        replacementText
-                    );
+                        () -> editor.getDocument().insertString(
+                                editor.getCaretModel()
+                                        .getCurrentCaret()
+                                        .getOffset(),
+                                replacementText
+                        );
             }
 
             WriteCommandAction.runWriteCommandAction(
-                editor.getProject(),
-                filterRunnable
+                    editor.getProject(),
+                    filterRunnable
             );
         } else {
             LOG.debug("Did not get anything back from shell. Canceling");
@@ -295,11 +290,10 @@ public class FilterAction extends AnAction {
 
     private String process(final String command,
                            final String filterContent)
-        throws
-        ShellCommandErrorException,
-        ShellCommandNoOutputException,
-        IOException, InterruptedException
-    {
+            throws
+            ShellCommandErrorException,
+            ShellCommandNoOutputException,
+            IOException, InterruptedException {
         LOG.debug("Writing command into a temporary file");
 
         final File commandFile;
@@ -311,14 +305,14 @@ public class FilterAction extends AnAction {
             commandFileWriter.close();
         } catch (final IOException e) {
             final String error = String.format(
-                resourceBundle.getString(
-                    "dialog.error.writingcommandfile.message"),
-                e.getMessage()
+                    resourceBundle.getString(
+                            "dialog.error.writingcommandfile.message"),
+                    e.getMessage()
             );
             LOG.error(error, e);
             Messages.showErrorDialog(
-                error,
-                resourceBundle.getString("dialog.error.writingcommandfile.title")
+                    error,
+                    resourceBundle.getString("dialog.error.writingcommandfile.title")
             );
             return null;
         }
@@ -361,19 +355,19 @@ public class FilterAction extends AnAction {
                 pStdErr = new DataInputStream(p.getErrorStream());
                 final String commandError = cat(pStdErr);
                 final String error = String.format(
-                    resourceBundle.getString("error.commanderror"),
-                    cmd,
-                    exitValue,
-                    output,
-                    commandError
+                        resourceBundle.getString("error.commanderror"),
+                        cmd,
+                        exitValue,
+                        output,
+                        commandError
                 );
                 throw new ShellCommandErrorException(error);
             }
 
             if (StringUtils.isEmpty(output)) {
                 final String error = String.format(
-                    resourceBundle.getString("error.nooutput"),
-                    cmd
+                        resourceBundle.getString("error.nooutput"),
+                        cmd
                 );
                 throw new ShellCommandNoOutputException(error);
             }
@@ -381,10 +375,10 @@ public class FilterAction extends AnAction {
         } finally {
             if (!commandFile.delete()) {
                 LOG.warn(
-                    String.format(
-                        "Temporary file %s can not be deleted.", //NON-NLS
-                        commandFile.getPath()
-                    )
+                        String.format(
+                                "Temporary file %s can not be deleted.", //NON-NLS
+                                commandFile.getPath()
+                        )
                 );
             }
         }
