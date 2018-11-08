@@ -175,7 +175,7 @@ public class FilterAction extends AnAction {
         popup.showInBestPositionFor(editor);
     }
 
-    private void runCommand(final CommandBean command, final Editor editor) {
+    protected void runCommand(final CommandBean command, final Editor editor) {
 
         LOG.debug("Running command");
 
