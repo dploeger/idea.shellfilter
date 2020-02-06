@@ -31,7 +31,7 @@ into the current Editor.</p>
     ]]>
     </change-notes>
 
-    <idea-version since-build="172"/>
+    <idea-version since-build="182.2371.4"/>
 
     <depends>com.intellij.modules.lang</depends>
 

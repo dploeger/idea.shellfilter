@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.3.4"
+    id "org.jetbrains.intellij" version "0.4.16"
 }
 
 apply plugin: 'idea'
@@ -15,19 +15,18 @@ sourceCompatibility = 1.8
 
 intellij {
     updateSinceUntilBuild = false
-    version '2017.2'
+    version '2019.3.2'
     pluginName 'shellfilter'
 }
 
 patchPluginXml {
-    sinceBuild '172.3317.76'
+    sinceBuild '182.2371.4'
 }
 
 publishPlugin{
     channels = ["stable"]
-    username = project.property("publish.username")
-    password = project.property("publish.password")
+    token = System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken")
 }
 
 group 'de.dieploegers.idea.shellfilter'
-version '2.1.0'
+version '3.0.0'

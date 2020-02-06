@@ -32,25 +32,10 @@ public class CustomFilterAction extends FilterAction {
         LOG.debug("Custom command selected. Show input dialog");
 
         final CommandBean lastCustomCommand =
-                Settings.getInstance().getLastCustomCommand();
+            Settings.getInstance().getLastCustomCommand();
 
-        final Pair<String, Boolean> customCommand =
-                Messages.showInputDialogWithCheckBox(
-                        resourceBundle.getString("dialog.custom.message"),
-                        resourceBundle.getString("dialog.custom.title"),
-                        resourceBundle.getString(
-                                "configuration.command.trim"),
-                        lastCustomCommand.isRemoveTrailingNewline(),
-                        true,
-                        ShellFilterIcons.TOOLBAR_ICON,
-                        lastCustomCommand.getCommand(),
-                        null
-                );
-
-        if (StringUtils.isEmpty(customCommand.getFirst())) {
-            LOG.debug("No custom command specified. Canceling");
-            return;
-        }
+        final Pair<String, Boolean> customCommand = getCustomCommand(lastCustomCommand);
+        if (customCommand == null) return;
 
         final CommandBean command = new CommandBean("Custom",
                 customCommand.getFirst(),

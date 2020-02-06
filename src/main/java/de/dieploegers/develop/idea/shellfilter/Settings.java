@@ -1,7 +1,7 @@
 package de.dieploegers.develop.idea.shellfilter;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -18,7 +18,7 @@ import java.util.List;
 @State(name = "ShellFilter", storages = {
     @Storage("shellfilter.xml")
 })
-public class Settings implements ApplicationComponent,
+public class Settings implements NamedComponent,
     PersistentStateComponent<Element>
 {
     @NonNls
@@ -40,14 +40,6 @@ public class Settings implements ApplicationComponent,
     }
 
     @Override
-    public void initComponent() {
-    }
-
-    @Override
-    public void disposeComponent() {
-    }
-
-    @Override
     @NotNull
     public String getComponentName() {
         return "ShellFilter";
@@ -57,16 +49,8 @@ public class Settings implements ApplicationComponent,
         return shellCommand;
     }
 
-    public void setShellCommand(final String shellCommand) {
-        this.shellCommand = shellCommand;
-    }
-
     public List<CommandBean> getCommands() {
         return commands;
-    }
-
-    public void setCommands(final List<CommandBean> commands) {
-        this.commands = commands;
     }
 
     @Nullable
@@ -83,7 +67,7 @@ public class Settings implements ApplicationComponent,
             if (commandBean.isRemoveTrailingNewline()) {
                 beanElement.setAttribute("removeTrailingNewline", "true");
             } else {
-                beanElement.setAttribute("removeTrailingNewline", "true");
+                beanElement.setAttribute("removeTrailingNewline", "false");
             }
             beanElement.setText(commandBean.getCommand());
             element.addContent(beanElement);
@@ -155,10 +139,6 @@ public class Settings implements ApplicationComponent,
 
     public CommandBean getLastCustomCommand() {
         return lastCustomCommand;
-    }
-
-    public void setLastCustomCommand(final CommandBean lastCustomCommand) {
-        this.lastCustomCommand = lastCustomCommand;
     }
 
     public String getLastSelectedCommand() {
