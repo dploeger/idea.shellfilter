@@ -27,6 +27,8 @@ into the current Editor.</p>
         <li><b>1.0.1</b> #1 Added default shortcut key CTRL-Meta-I</li>
         <li><b>2.0.0</b> #2 When no text is selected, the complete file will be send to STDIN</li>
         <li><b>2.1.0</b> #3 Added feature to directly enter a custom command using default shortcut CTRL+SHIFT+I</lI>
+        <li><b>3.0.0</b> Removed deprecated API calls to be able to support the plugin for future IDEs</lI>
+        <li><b>3.0.1</b> Missed changelog on 3.0.0</lI>
       </ul>
     ]]>
     </change-notes>
