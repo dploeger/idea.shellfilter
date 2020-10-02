@@ -29,6 +29,8 @@ into the current Editor.</p>
         <li><b>2.1.0</b> #3 Added feature to directly enter a custom command using default shortcut CTRL+SHIFT+I</lI>
         <li><b>3.0.0</b> Removed deprecated API calls to be able to support the plugin for future IDEs</lI>
         <li><b>3.0.1</b> Missed changelog on 3.0.0</lI>
+        <li><b>3.0.2</b> Removed deprecated API call to Icon.getLoader</lI>
+        <li><b>3.0.3</b> Missed changelog on 3.0.2 (again :/)</lI>
       </ul>
     ]]>
     </change-notes>
