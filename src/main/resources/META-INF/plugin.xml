@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>de.dieploegers.develop.idea.shellfilter</id>
     <name>Shell Filter</name>
-    <version>2.1.0</version>
+    <version>4.1.0</version>
     <vendor email="jetbrains.dennis@dieploegers.de" url="https://github.com/dploeger/idea.shellfilter">
         Dennis Plöger
     </vendor>
@@ -31,6 +31,7 @@ into the current Editor.</p>
         <li><b>3.0.1</b> Missed changelog on 3.0.0</lI>
         <li><b>3.0.2</b> Removed deprecated API call to Icon.getLoader</lI>
         <li><b>3.0.3</b> Missed changelog on 3.0.2 (again :/)</lI>
+        <li><b>4.1.0</b> Support for current IntelliJ version</li>
       </ul>
     ]]>
     </change-notes>
