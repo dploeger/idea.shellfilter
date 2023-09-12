@@ -1,9 +1,9 @@
 package icons;
 
-import com.intellij.ui.IconManager;
+import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
 public final class ShellFilterIcons {
-    public static Icon TOOLBAR_ICON = IconManager.getInstance().getIcon("/icons/icon.png", ShellFilterIcons.class);
+    public static Icon TOOLBAR_ICON = IconLoader.getIcon("/icons/icon.png",ShellFilterIcons.class);
 }

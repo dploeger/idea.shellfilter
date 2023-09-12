@@ -1,35 +1,21 @@
 package de.dieploegers.develop.idea.shellfilter;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.popup.IPopupChooserBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.ListSpeedSearch;
-import com.intellij.ui.components.JBList;
 import de.dieploegers.develop.idea.shellfilter.beans.CommandBean;
 import de.dieploegers.develop.idea.shellfilter.error.ShellCommandErrorException;
 import de.dieploegers.develop.idea.shellfilter.error.ShellCommandNoOutputException;
 import icons.ShellFilterIcons;
 import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.util.*;
 
 public class FilterAction extends AnAction {
 
@@ -77,9 +63,6 @@ public class FilterAction extends AnAction {
                 true));
 
         LOG.debug("Building up command list popup");
-
-        final JBList<CommandBean> commandList = new JBList<>(commands);
-        new ListSpeedSearch<>(commandList);
 
         final String lastSelectedCommand =
             Settings.getInstance().getLastSelectedCommand();
@@ -277,6 +260,11 @@ public class FilterAction extends AnAction {
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
+    }
+
+    @Override
     public void update(final AnActionEvent e) {
         final Editor editor = e.getData(CommonDataKeys.EDITOR);
         if (editor == null) {
@@ -340,7 +328,7 @@ public class FilterAction extends AnAction {
             p = Runtime.getRuntime().exec(cmd);
 
             pStdout = new DataInputStream(p.getInputStream());
-            if (filterContent.length() > 0) {
+            if (!filterContent.isEmpty()) {
                 LOG.debug("Piping selected text into stdin of the shell");
                 pStdin = new DataOutputStream(p.getOutputStream());
                 pStdin.write(filterContent.getBytes());

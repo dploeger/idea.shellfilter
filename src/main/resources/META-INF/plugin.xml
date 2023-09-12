@@ -37,11 +37,12 @@ into the current Editor.</p>
         <li><b>4.4.0</b> Support for current IntelliJ version</li>
         <li><b>4.5.0</b> Support for current IntelliJ version</li>
         <li><b>4.6.0</b> Support for current IntelliJ version</li>
+        <li><b>4.6.1</b> Fixed deprecations</li>
       </ul>
     ]]>
     </change-notes>
 
-    <idea-version since-build="182.2371.4"/>
+    <idea-version since-build="232.9559.62"/>
 
     <depends>com.intellij.modules.lang</depends>
 

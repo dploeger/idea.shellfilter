@@ -21,6 +21,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="6acc7"/>
               <text resource-bundle="i18n/shellfilter" key="configuration.command.name"/>
             </properties>
           </component>
@@ -29,6 +30,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="6ff19"/>
               <text resource-bundle="i18n/shellfilter" key="configuration.command.command"/>
             </properties>
           </component>
@@ -70,4 +72,7 @@
       </component>
     </children>
   </grid>
+  <inspectionSuppressions>
+    <suppress inspection="NoLabelFor" id="dedf0"/>
+  </inspectionSuppressions>
 </form>
