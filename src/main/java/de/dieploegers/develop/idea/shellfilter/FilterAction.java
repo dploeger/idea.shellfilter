@@ -11,7 +11,7 @@ import de.dieploegers.develop.idea.shellfilter.beans.CommandBean;
 import de.dieploegers.develop.idea.shellfilter.error.ShellCommandErrorException;
 import de.dieploegers.develop.idea.shellfilter.error.ShellCommandNoOutputException;
 import icons.ShellFilterIcons;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.*;
 
 import java.io.*;
