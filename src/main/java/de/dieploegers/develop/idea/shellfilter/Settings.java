@@ -1,151 +1,91 @@
 package de.dieploegers.develop.idea.shellfilter;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.NamedComponent;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import de.dieploegers.develop.idea.shellfilter.beans.CommandBean;
-import de.dieploegers.develop.idea.shellfilter.beans.ConfigurationBean;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.openapi.components.*;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import de.dieploegers.develop.idea.shellfilter.beans.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@State(name = "ShellFilter", storages = {
-    @Storage("shellfilter.xml")
+@Service
+@State(name = "ShellFilterConfig", storages = {
+    @Storage("shellfilter-config.xml")
 })
-public class Settings implements NamedComponent,
-    PersistentStateComponent<Element>
-{
-    @NonNls
-    private String shellCommand;
-    private List<CommandBean> commands;
-    private CommandBean lastCustomCommand;
-    private String lastSelectedCommand;
+public final class Settings implements PersistentStateComponent<Settings.State> {
+    public static class State {
+        public String shellCommand;
 
-    public Settings() {
-        this.shellCommand = "/bin/sh %s";
-        this.commands = new ArrayList<>();
-        this.lastCustomCommand = new CommandBean("Custom", "", true);
-        this.lastSelectedCommand = null;
+        public List<CommandBean> commands;
+
+        @OptionTag(converter = CommandBeanConverter.class)
+        public CommandBean lastCustomCommand;
+
+        public String lastSelectedCommand;
+
+        public State() {
+            this.shellCommand = "/bin/sh %s";
+            this.commands = new ArrayList<>();
+            this.lastCustomCommand = new CommandBean("Custom", "", true);
+            this.lastSelectedCommand = null;
+        }
     }
+
+    private State state = new State();
 
     public static Settings getInstance() {
         return ApplicationManager.getApplication()
-            .getComponent(Settings.class);
-    }
-
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return "ShellFilter";
+            .getService(Settings.class);
     }
 
     public String getShellCommand() {
-        return shellCommand;
+        return this.state.shellCommand;
     }
 
     public List<CommandBean> getCommands() {
-        return commands;
+        return this.state.commands;
     }
 
-    @Nullable
-    @Override
-    public Element getState() {
-        @NonNls final Element element = new Element("ShellFilterSettings");
-        element.setAttribute("shellCommand", shellCommand);
-        if (lastSelectedCommand != null) {
-            element.setAttribute("lastSelectedCommand", lastSelectedCommand);
-        }
-        for (final CommandBean commandBean : commands) {
-            @NonNls final Element beanElement = new Element("Command");
-            beanElement.setAttribute("name", commandBean.getName());
-            if (commandBean.isRemoveTrailingNewline()) {
-                beanElement.setAttribute("removeTrailingNewline", "true");
-            } else {
-                beanElement.setAttribute("removeTrailingNewline", "false");
-            }
-            beanElement.setText(commandBean.getCommand());
-            element.addContent(beanElement);
-        }
-        @NonNls final Element
-            lastCustomCommandElement =
-            new Element("LastCustomCommand");
-        if (lastCustomCommand.isRemoveTrailingNewline()) {
-            lastCustomCommandElement.setAttribute("removeTrailingNewline",
-                "true");
-        } else {
-            lastCustomCommandElement.setAttribute("removeTrailingNewline",
-                "false");
-        }
-        lastCustomCommandElement.setText(lastCustomCommand.getCommand());
-        element.addContent(lastCustomCommandElement);
+    public State getState() {
+        return this.state;
+    }
 
-        return element;
+    public void loadState(final @NotNull State state) {
+        this.state = state;
     }
 
     @Override
-    public void loadState(final Element state) {
-        this.shellCommand = state.getAttributeValue("shellCommand"); //NON-NLS
-        if (state.getAttributeValue("lastSelectedCommand") != null) { //NON-NLS
-            this.lastSelectedCommand =
-                state.getAttributeValue("lastSelectedCommand"); //NON-NLS
-        }
-        this.commands = new ArrayList<>();
-
-        for (final Element element : state.getChildren()) {
-            if (element.getName().equals("Command")) { //NON-NLS
-                final CommandBean commandBean = new CommandBean();
-                commandBean.setName(element.getAttributeValue("name"));
-                commandBean.setRemoveTrailingNewline(
-                    element.getAttributeValue("removeTrailingNewline") //NON-NLS
-                        .equalsIgnoreCase("true") //NON-NLS
-                );
-                commandBean.setCommand(element.getText());
-                this.commands.add(commandBean);
-            } else if (element.getName().equals("LastCustomCommand")) { //NON-NLS
-                lastCustomCommand = new CommandBean();
-                lastCustomCommand.setName("Custom"); //NON-NLS
-                lastCustomCommand.setCommand(element.getText());
-
-                lastCustomCommand.setRemoveTrailingNewline(false);
-
-                if (
-                    element.getAttributeValue("removeTrailingNewline") //NON-NLS
-                        .equalsIgnoreCase("true") //NON-NLS
-                    )
-                {
-                    lastCustomCommand.setRemoveTrailingNewline(true);
-                }
-            }
-        }
+    public void noStateLoaded() {
+        final var legacySettings = LegacySettings.getInstance();
+        // convert from old version
+        this.state.shellCommand = legacySettings.getShellCommand();
+        this.state.commands = legacySettings.getCommands();
+        this.state.lastCustomCommand = legacySettings.getLastCustomCommand();
+        this.state.lastSelectedCommand = legacySettings.getLastSelectedCommand();
     }
 
     public void setFromConfigurationBean(final ConfigurationBean bean) {
-        this.shellCommand = bean.getShellCommand();
-        this.commands = bean.getCommands();
+        this.state.shellCommand = bean.getShellCommand();
+        this.state.commands = bean.getCommands();
     }
 
     public ConfigurationBean getConfigurationBean() {
         final ConfigurationBean configurationBean = new ConfigurationBean();
-        configurationBean.setShellCommand(this.shellCommand);
-        configurationBean.setCommands(this.commands);
+        configurationBean.setShellCommand(this.state.shellCommand);
+        configurationBean.setCommands(this.state.commands);
         return configurationBean;
     }
 
     public CommandBean getLastCustomCommand() {
-        return lastCustomCommand;
+        return state.lastCustomCommand;
     }
 
     public String getLastSelectedCommand() {
-        return lastSelectedCommand;
+        return state.lastSelectedCommand;
     }
 
     public void setLastSelectedCommand(final String lastSelectedCommand) {
-        this.lastSelectedCommand = lastSelectedCommand;
+        this.state.lastSelectedCommand = lastSelectedCommand;
     }
 }

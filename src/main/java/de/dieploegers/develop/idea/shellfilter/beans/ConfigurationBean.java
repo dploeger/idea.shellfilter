@@ -1,6 +1,6 @@
 package de.dieploegers.develop.idea.shellfilter.beans;
 
-import java.util.List;
+import java.util.*;
 
 public class ConfigurationBean {
     private String shellCommand;
@@ -22,6 +22,6 @@ public class ConfigurationBean {
     }
 
     public void setCommands(final List<CommandBean> commands) {
-        this.commands = commands;
+        this.commands = Objects.requireNonNullElseGet(commands, ArrayList::new);
     }
 }

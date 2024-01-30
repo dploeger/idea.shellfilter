@@ -39,6 +39,7 @@ into the current Editor.</p>
         <li><b>4.6.0</b> Support for current IntelliJ version</li>
         <li><b>4.6.1</b> Fixed deprecations</li>
         <li><b>4.6.2</b> Support for current IntelliJ version</li>
+        <li><b>4.7.0</b> Updated framework to work with newer IntelliJ versions and to be able to reload the plugin without IDE restart. <b>This version includes deprecated support for the old configuration style. You need to install this version to be able to continue using your configuration in the next major version of this plugin.</b></li>
       </ul>
     ]]>
     </change-notes>
@@ -51,8 +52,11 @@ into the current Editor.</p>
         <applicationService
             serviceImplementation="de.dieploegers.develop.idea.shellfilter.Settings"/>
         <applicationConfigurable
+            id="de.dieploegers.develop.idea.shellfilter.ui.Configurable"
+            key="configuration.name"
+            bundle="i18n.shellfilter"
             instance="de.dieploegers.develop.idea.shellfilter.ui.Configurable"
-            groupId="null"/>
+            parentId="tools"/>
     </extensions>
 
     <actions>
@@ -77,12 +81,4 @@ into the current Editor.</p>
             <keyboard-shortcut first-keystroke="control meta shift I" keymap="$default"/>
         </action>
     </actions>
-
-    <application-components>
-        <component>
-            <implementation-class>
-                de.dieploegers.develop.idea.shellfilter.Settings
-            </implementation-class>
-        </component>
-    </application-components>
 </idea-plugin>

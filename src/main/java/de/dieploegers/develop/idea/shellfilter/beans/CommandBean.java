@@ -1,10 +1,14 @@
 package de.dieploegers.develop.idea.shellfilter.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NonNls;
 
 public class CommandBean {
+    @JsonProperty
     private String name;
+    @JsonProperty
     private String command;
+    @JsonProperty
     private boolean removeTrailingNewline;
 
     public CommandBean() {

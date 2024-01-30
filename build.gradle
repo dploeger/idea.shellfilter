@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.intellij" version "1.13.3"
+    id "org.jetbrains.intellij" version "1.16.1"
 }
 
 repositories {
@@ -22,5 +22,9 @@ publishPlugin {
     token = System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken")
 }
 
+runPluginVerifier {
+    ideVersions = ["233.11799.241"]
+}
+
 group 'de.dieploegers.idea.shellfilter'
-version '4.6.2'
+version '4.7.0'
