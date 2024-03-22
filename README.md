@@ -1,5 +1,8 @@
 # ![](src/main/resources/icons/icon@2x.png) Shell Filter
 
+> [!CAUTION]
+> This repository contains the old code of the Shell Filter plugin. The code was moved to the [new repository](https://github.com/dploeger/idea-shellfilter).
+
 ## Introduction
 
 The Shell Filter plugin for Jetbrains IDEs enables the developer to run
